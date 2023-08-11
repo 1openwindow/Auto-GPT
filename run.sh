@@ -22,6 +22,10 @@ if $PYTHON_CMD -c "import sys; sys.exit(sys.version_info < (3, 10))"; then
         echo Installing missing packages...
         $PYTHON_CMD -m pip install -r requirements.txt
     fi
+
+    export accessToken=$(az account get-access-token --resource https://cognitiveservices.azure.com | jq -r .accessToken)
+    sed -i "s/OPENAI_API_KEY=.*/OPENAI_API_KEY=$accessToken/" ./.env
+
     $PYTHON_CMD -m autogpt "$@"
     read -p "Press any key to continue..."
 else
